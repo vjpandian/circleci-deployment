@@ -5,7 +5,7 @@ const TestButton = () => {
   
  return (
   <>
-    <button data-testid="button_container" onClick={() => setCounter(counter + 1)}> Up</button>
+    <button data-testid="button_container" onClick={() => setCounter(counter + 1)}> Submit</button>
  </>
     )
   }
