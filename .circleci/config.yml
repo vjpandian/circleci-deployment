@@ -1,6 +1,7 @@
+
 jobs:
   test:
-    description: "Run tests with jest via CI"
+    description: "Run tests with jest"
     docker:
       - image: circleci/node:12
     steps:
@@ -32,4 +33,4 @@ workflows:
   test_and_deploy:
     jobs:
       - test
-      - deploy_aws:
+      - deploy_aws
