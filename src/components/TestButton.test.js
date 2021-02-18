@@ -4,7 +4,7 @@ import TestButton from './TestButton'
 
 afterEach(cleanup);
 
-   it('should be enabled', () => {
+   it('enabled', () => {
     const { getByTestId } = render(<TestButton />);
     expect(getByTestId('button_container')).not.toHaveAttribute('disabled')
   });
