@@ -9,5 +9,12 @@ class Button extends React.Component {
     if (this.state.clicked) {
       return 'Good job!';
     }
+  return e(
+      'button',
+      { onClick: () => this.setState({ clicked: true }) },
+      'Submit'
+    );
+  }
+}
 const domContainer = document.querySelector('#button_container');
 ReactDOM.render(e(Button), domContainer);
