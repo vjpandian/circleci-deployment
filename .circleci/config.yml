@@ -7,9 +7,29 @@ jobs:
       - checkout
       - run: npm install
       - run: npm test
+  deploy_aws:
+    docker:
+      - image: 'cimg/python:3.6'
+    steps:
+      - checkout
+      - run: mkdir bucket
+      - run: cp index.html bucket
+      - run: cp index.js bucket
+      - aws-s3/sync:
+          arguments: |
+            --acl public-read \
+            --cache-control "max-age=86400"
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-region: AWS_REGION
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          from: bucket
+          to: 's3://circle-ci-devops'
+orbs:
+  aws-s3: circleci/aws-s3@2.0
 version: 2.1
 workflows:
   version: 2
-  test:
+  test_and_deploy:
     jobs:
       - test
+      - deploy_aws:
