@@ -34,3 +34,5 @@ workflows:
     jobs:
       - test
       - deploy_aws
+          requires:
+            - test
