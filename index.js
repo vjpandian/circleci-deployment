@@ -7,7 +7,7 @@ class Button extends React.Component {
   }
   render() {
     if (this.state.clicked) {
-      return 'Good job!';
+      return 'Thanks for clicking!';
     }
   return e(
       'button',
