@@ -1,4 +1,12 @@
 jobs:
+  test:
+    description: "Run tests with jest"
+    docker:
+      - image: circleci/node:12
+    steps:
+      - checkout
+      - run: npm install
+      - run: npm test
   build-and-deploy:
     description: "Build and push to ECS"
     docker:
@@ -23,14 +31,6 @@ jobs:
           force-new-deployment: true
           service-name: 'circleci-test-service'
           family: 'nginx-task-1'
-  test:
-    description: "Run tests with jest"
-    docker:
-      - image: circleci/node:12
-    steps:
-      - checkout
-      - run: npm install
-      - run: npm test
 orbs:
   aws-cli: circleci/aws-cli@1.3
   aws-ecr: circleci/aws-ecr@6.15
