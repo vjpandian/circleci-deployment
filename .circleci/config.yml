@@ -1,5 +1,28 @@
-
 jobs:
+  build-and-deploy:
+    description: "Build and push to ECS"
+    docker:
+      - image: circleci/node:12
+    steps:
+    - aws-ecr/build-and-push-image:
+        account-url: AWS_ECR_ACCOUNT_URL
+        region: AWS_REGION
+        repo: circle-ci-registry-vp
+        tag: latest
+  deploy-ecs:
+    description: "Update ECS tag and deploy"
+    docker:
+      - image: 'cimg/python:3.9.1'
+    steps:
+      - aws-cli/setup:
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-region: AWS_REGION
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+      - aws-ecs/update-service:
+          cluster-name: 'circleci-test-cluster'
+          force-new-deployment: true
+          service-name: 'circleci-test-service'
+          family: 'nginx-task-1'
   test:
     description: "Run tests with jest"
     docker:
@@ -27,12 +50,26 @@ jobs:
           to: 's3://circle-ci-devops'
 orbs:
   aws-s3: circleci/aws-s3@2.0
+  aws-cli: circleci/aws-cli@1.3
+  aws-ecr: circleci/aws-ecr@6.15
+  aws-ecs: circleci/aws-ecs@2.0.0
 version: 2.1
 workflows:
   version: 2
   test_and_deploy:
     jobs:
       - test
-      - deploy_aws:
+      - aws-ecr/build-and-push-image:
+          account-url: AWS_ECR_ACCOUNT_URL
+          aws-access-key-id: AWS_ACCESS_KEY_ID
+          aws-secret-access-key: AWS_SECRET_ACCESS_KEY
+          dockerfile: Dockerfile
+          no-output-timeout: 20m
+          region: AWS_REGION
+          repo: circle-ci-registry-vp
+          tag: 'latest'
           requires:
             - test
+      - deploy-ecs:
+          requires:
+            - aws-ecr/build-and-push-image
